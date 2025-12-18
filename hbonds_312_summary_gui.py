@@ -3,7 +3,15 @@ import csv
 from pathlib import Path
 from collections import defaultdict
 
-# 兼容你这种 ChimeraX H-bonds 输出行
+# ------------------------------------------------------------
+# 正则：兼容你这种 ChimeraX H-bonds 输出行
+# 说明：
+# - 抓取两端参与氢键的对象：model/chain/residue_name/residue_number/atom_name
+# - 并抓取 D..A 距离（da）
+# 注意：
+# - 这里假定 chain 是单字符（\S），residue name 是三字母大写（[A-Z]{3}）
+# - 若你的输出格式变化（例如链名更长、残基名不是三字母、字段间空格变化），需要改 pat
+# ------------------------------------------------------------
 pat = re.compile(
     r"#(?P<m1>\d+)/(?P<c1>\S)\s+(?P<r1>[A-Z]{3})\s+(?P<n1>\d+)\s+(?P<a1>\S+)\s+.*?"
     r"#(?P<m2>\d+)/(?P<c2>\S)\s+(?P<r2>[A-Z]{3})\s+(?P<n2>\d+)\s+(?P<a2>\S+)\s+.*?"
